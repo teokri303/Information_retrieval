@@ -119,6 +119,9 @@ for y in range (len(books_list)):
     np.append(rating_source,[[uid,isbn,rat]], axis=0)
 
 #rating_list = list(rating_source) 
+
+
+
    
 
 
@@ -126,3 +129,17 @@ for y in range (len(books_list)):
 
 for x in range(len(rating_source)):
     print(rating_source[x])
+
+
+
+
+
+
+
+
+
+
+#BASIKA PROVLIMATA AYTI TIN STIGMH
+
+#-- DEN MPOROUME NA VALOYME SOSTA TA DEDOEMNA SE 2D ARRAY MONO ENA ENA MPROOPYME 
+#-- MALLON PSAXNEI TO ISBN MIA FORA MONO ENO PREPEI NA TO AFHNOYME NA TO PSAXNEI PERISSOTERES FORES KATHOS DEN YPARXEI MONO MIA KRITIKI GIA KATHE VIVLIO MESA STA RATINGS
