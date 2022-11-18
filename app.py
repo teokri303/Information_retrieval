@@ -98,7 +98,8 @@ for book in books_list:
 #psaxnoyme ti rating exei kanei o xrhsths sta sxetika vivlia poy proekupsan
 rating_final = []
 for y in range (len(books_list)):
-
+    isbn =books_list[y]['_source']['isbn']
+    
     rating = scan(es,
         #insert the index that you want data from
         index="ratings",
@@ -107,15 +108,20 @@ for y in range (len(books_list)):
     )
 
     rating_changed = list(rating) 
-    #print(rating_changed[y]['_source']['isbn'])
-    data = [rating_changed[0]['_source']['uid'],rating_changed[0]['_source']['isbn'],rating_changed[0]['_source']['rating']]
     
-    #print(data)
-    rating_final.append(data)
+    #print(len(rating_changed))
+
+    #to kanoyme ayto gia na mpainoyn ola ta ratings gia kathe isbn
+    for x in range(len(rating_changed)):
+        data = [rating_changed[x]['_source']['uid'],rating_changed[x]['_source']['isbn'],rating_changed[x]['_source']['rating']]
+    
+        rating_final.append(data)
     #print(rating_final)
 
+#ratings gia ta isbn poy tairiazoyn 
+print(len(rating_final))
 
-
+#ektuposi full ratings
 for x in range(len(rating_final)):
     print(rating_final[x])
 
@@ -130,5 +136,4 @@ for x in range(len(rating_final)):
 
 #BASIKA PROVLIMATA AYTI TIN STIGMH
 
-
-#-- MALLON PSAXNEI TO ISBN MIA FORA MONO ENO PREPEI NA TO AFHNOYME NA TO PSAXNEI PERISSOTERES FORES KATHOS DEN YPARXEI MONO MIA KRITIKI GIA KATHE VIVLIO MESA STA RATINGS
+#na katharistei h lista ratings_final filtrarontas tin analoga me to uid poy mas edose o xrhsths apo thn arxh
