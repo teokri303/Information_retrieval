@@ -67,24 +67,62 @@ print(df.head())
 """
 
 search_topic = input("Write what book do you want to search: ")
-#user = input("Write your UID:  ")
+user = input("Write your UID:  ")
 
-results = scan(es,
+#pairnoume ta sxetika vivlia
+results_books = scan(es,
     #insert the index that you want data from
     index="books",
     preserve_order=True,
     query={"query": {"match": {"book_title" : search_topic }}},
 )
 
+#metatroph to 'generator' object se list gia na einai prospelasimo
+books_list = list(results_books)
+#print(books_list[1]['_score'])
 
 
-
+#printarei ta x pio sxetika vivlia pou vrike
 x=0
-for item in results:
+for book in books_list:
     #change the x for how many data rows you want
     if x<100:
-        #print(item)
-        print(item['_score'], item['_source']['isbn'], item['_source']['book_title'])
+        
+        print(x+1,")", book['_score'], book['_source']['isbn'], book['_source']['book_title'])
         x=x+1
     else:
         break    
+
+
+
+#psaxnoyme ti rating exei kanei o xrhsths sta sxetika vivlia poy proekupsan
+rating_source = np.empty(3)
+for y in range (len(books_list)):
+
+    rating = scan(es,
+        #insert the index that you want data from
+        index="ratings",
+        preserve_order=True,
+        query={"query": {"match": {"isbn" : books_list[y]['_source']['isbn'] }, }},
+    )
+
+    rating_changed = list(rating) 
+    #print(rating_changed[y]['_source']['isbn'])
+    uid = rating_changed[0]['_source']['uid']
+    isbn = rating_changed[0]['_source']['isbn']
+    rat = rating_changed[0]['_source']['rating']
+
+   # rating_source.append(rating_changed[0]['_source']['uid'])
+   # rating_source.append(rating_changed[0]['_source']['isbn'])
+   # rating_source.append(rating_changed[0]['_source']['rating'])
+
+    np.append(rating_source,[[uid,isbn,rat]], axis=0)
+
+#rating_list = list(rating_source) 
+   
+
+
+
+
+for x in range(len(rating_source)):
+    print(rating_source[x])
