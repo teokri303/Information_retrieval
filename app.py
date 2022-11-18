@@ -67,7 +67,7 @@ print(df.head())
 """
 
 search_topic = input("Write what book do you want to search: ")
-user = input("Write your UID:  ")
+#user = input("Write your UID:  ")
 
 #pairnoume ta sxetika vivlia
 results_books = scan(es,
@@ -96,7 +96,7 @@ for book in books_list:
 
 
 #psaxnoyme ti rating exei kanei o xrhsths sta sxetika vivlia poy proekupsan
-rating_source = np.empty(3)
+rating_final = []
 for y in range (len(books_list)):
 
     rating = scan(es,
@@ -108,27 +108,16 @@ for y in range (len(books_list)):
 
     rating_changed = list(rating) 
     #print(rating_changed[y]['_source']['isbn'])
-    uid = rating_changed[0]['_source']['uid']
-    isbn = rating_changed[0]['_source']['isbn']
-    rat = rating_changed[0]['_source']['rating']
-
-   # rating_source.append(rating_changed[0]['_source']['uid'])
-   # rating_source.append(rating_changed[0]['_source']['isbn'])
-   # rating_source.append(rating_changed[0]['_source']['rating'])
-
-    np.append(rating_source,[[uid,isbn,rat]], axis=0)
-
-#rating_list = list(rating_source) 
+    data = [rating_changed[0]['_source']['uid'],rating_changed[0]['_source']['isbn'],rating_changed[0]['_source']['rating']]
+    
+    #print(data)
+    rating_final.append(data)
+    #print(rating_final)
 
 
 
-   
-
-
-
-
-for x in range(len(rating_source)):
-    print(rating_source[x])
+for x in range(len(rating_final)):
+    print(rating_final[x])
 
 
 
@@ -141,5 +130,5 @@ for x in range(len(rating_source)):
 
 #BASIKA PROVLIMATA AYTI TIN STIGMH
 
-#-- DEN MPOROUME NA VALOYME SOSTA TA DEDOEMNA SE 2D ARRAY MONO ENA ENA MPROOPYME 
+
 #-- MALLON PSAXNEI TO ISBN MIA FORA MONO ENO PREPEI NA TO AFHNOYME NA TO PSAXNEI PERISSOTERES FORES KATHOS DEN YPARXEI MONO MIA KRITIKI GIA KATHE VIVLIO MESA STA RATINGS
