@@ -11,6 +11,8 @@ ENDPOINT = "http://localhost:9200"
 es = Elasticsearch(hosts=ENDPOINT)
 
 """ 
+To kratame giati etsi fortwsame ta arxeia wste na to deiksoyme sthn anafora
+
 with open("BX-Books.csv") as f:
     reader = csv.DictReader(f)
     helpers.bulk(es, reader, index="books")
@@ -25,6 +27,7 @@ with open("BX-Book-Ratings.csv") as y:
     """
 
 """
+logika tha fugei auto 
 def get_data_from_elastic():
     # query: The elasticsearch query.
     query = {
@@ -63,22 +66,25 @@ print(df.head())
 
 """
 
+search_topic = input("Write what book do you want to search: ")
+#user = input("Write your UID:  ")
+
 results = scan(es,
     #insert the index that you want data from
     index="books",
     preserve_order=True,
-    query={"query": {"match": {"book_title" : "angel"}}},
+    query={"query": {"match": {"book_title" : search_topic }}},
 )
+
+
+
 
 x=0
 for item in results:
     #change the x for how many data rows you want
-    if x<10000:
-        print(item['_source']['book_title'])
+    if x<100:
+        #print(item)
+        print(item['_score'], item['_source']['isbn'], item['_source']['book_title'])
         x=x+1
     else:
         break    
-
-
-#mporo na pairno oti thelo tora
-# tora prepei na mporei apo to query arxika na epilegei oti tou leme kai na fernei piso
