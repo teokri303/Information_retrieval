@@ -67,7 +67,28 @@ print(df.head())
 """
 
 search_topic = input("\nWrite what book do you want to search: ")
-#user = input("Write your UID:  \n")
+user = input("Write your UID:  ")
+
+#elengos gia to an o user exei eisagei swsto uid
+check = 0
+while check ==0:
+    users_check = scan(es,
+    #insert the index that you want data from
+        index="users",
+        preserve_order=True,
+        query={"query": {"match": {"uid" : user }}},
+    )
+
+    usr = list(users_check)
+
+    if usr:
+        print('User verified. ')
+        check = 1
+    else:
+        print('User does not exist')
+        user = input("Write your UID:  ")
+
+
 
 #pairnoume ta sxetika vivlia
 results_books = scan(es,
@@ -96,7 +117,7 @@ for book in books_list:
 
 
 #psaxnoyme ti rating exei kanei o xrhsths sta sxetika vivlia poy proekupsan
-rating_final = []
+ratings_full = []
 for y in range (len(books_list)):
     isbn =books_list[y]['_source']['isbn']
     
@@ -108,22 +129,35 @@ for y in range (len(books_list)):
     )
 
     rating_changed = list(rating) 
-    
-    #print(len(rating_changed))
 
     #to kanoyme ayto gia na mpainoyn ola ta ratings gia kathe isbn
     for x in range(len(rating_changed)):
         data = [rating_changed[x]['_source']['uid'],rating_changed[x]['_source']['isbn'],rating_changed[x]['_source']['rating']]
     
-        rating_final.append(data)
-    #print(rating_final)
+        ratings_full.append(data)
+    #print(ratings_full)
 
+'''
 #ektuposi full ratings
-for x in range(len(rating_final)):
-    print(rating_final[x])
+for x in range(len(ratings_full)):
+    print(ratings_full[x])
+'''
 
 #ratings gia ta isbn poy tairiazoyn 
-print("\n", len(rating_final) , " ratings made \n")
+print("\n", len(ratings_full) , " ratings made \n")
+
+ratings_final = []
+for x in range (len(ratings_full)):
+    if (ratings_full[x][0] == user ):
+        ratings_final.append(ratings_full[x])
+        print("added ", x)
+
+#ektuposi final ratings tou xrhsth poy mas endiaferei
+if ratings_final:
+    for x in range(len(ratings_final)):
+        print(ratings_final[x])
+else:
+    print("\nUser has no recorded ratings for the relative books")        
 
 
 
