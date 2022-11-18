@@ -66,8 +66,8 @@ print(df.head())
 
 """
 
-search_topic = input("Write what book do you want to search: ")
-#user = input("Write your UID:  ")
+search_topic = input("\nWrite what book do you want to search: ")
+#user = input("Write your UID:  \n")
 
 #pairnoume ta sxetika vivlia
 results_books = scan(es,
@@ -86,7 +86,7 @@ books_list = list(results_books)
 x=0
 for book in books_list:
     #change the x for how many data rows you want
-    if x<100:
+    if x<100000:
         
         print(x+1,")", book['_score'], book['_source']['isbn'], book['_source']['book_title'])
         x=x+1
@@ -118,12 +118,12 @@ for y in range (len(books_list)):
         rating_final.append(data)
     #print(rating_final)
 
-#ratings gia ta isbn poy tairiazoyn 
-print(len(rating_final))
-
 #ektuposi full ratings
 for x in range(len(rating_final)):
     print(rating_final[x])
+
+#ratings gia ta isbn poy tairiazoyn 
+print("\n", len(rating_final) , " ratings made \n")
 
 
 
