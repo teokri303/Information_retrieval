@@ -69,14 +69,14 @@ print(df.head())
 search_topic = input("\nWrite what book do you want to search: ")
 user = input("Write your UID:  ")
 
-#elengos gia to an o user exei eisagei swsto uid
+#elegxos gia to an o user exei eisagei swsto uid
 check = 0
 while check ==0:
     users_check = scan(es,
     #insert the index that you want data from
         index="users",
         preserve_order=True,
-        query={"query": {"match": {"uid" : user }}},
+        query={"query": {"match": {"uid" :user}}},
     )
 
     usr = list(users_check)
@@ -88,86 +88,107 @@ while check ==0:
         print('User does not exist')
         user = input("Write your UID:  ")
 
+#pairnoume ta sxetika me to alfarithmitiko pou edose o xristis vivlia 
 
-
-#pairnoume ta sxetika vivlia
-results_books = scan(es,
+books_final=[]
+books_query_results = scan(es,
     #insert the index that you want data from
     index="books",
     preserve_order=True,
     query={"query": {"match": {"book_title" : search_topic }}},
 )
 
-#metatroph to 'generator' object se list gia na einai prospelasimo
-books_list = list(results_books)
-#print(books_list[1]['_score'])
+#metatroph to 'generator' object se list gia na einai prospelasimo pio eukola
+books_mid = list(books_query_results)
 
+#eisagogi stin lista books_final olon ton aparaititon vivliwn
+for x in range(len(books_mid)):
+        data = [books_mid[x]['_score'], books_mid[x]['_source']['isbn'], books_mid[x]['_source']['book_title']]
+    
+        books_final.append(data)
+'''
+#ektuposi twn sxetikwn vivliwn
+for x in range(len(books_final)):
+        print(x+1, ")", books_final[x][0], books_final[x][1], books_final[x][2])
 
-#printarei ta x pio sxetika vivlia pou vrike
-x=0
-for book in books_list:
-    #change the x for how many data rows you want
-    if x<100000:
-        
-        print(x+1,")", book['_score'], book['_source']['isbn'], book['_source']['book_title'])
-        x=x+1
-    else:
-        break    
-
+'''
 
 
 #psaxnoyme ti rating exei kanei o xrhsths sta sxetika vivlia poy proekupsan
-ratings_full = []
-for y in range (len(books_list)):
-    isbn =books_list[y]['_source']['isbn']
+ratings_final = []
+for y in range (len(books_final)):
+    isbn =books_final[y][1]
     
-    rating = scan(es,
-        #insert the index that you want data from
+    #pairnoume ola ta rating poy exoun ginei gia ta sxetika vivlia
+    ratings_query_results = scan(es,
         index="ratings",
         preserve_order=True,
-        query={"query": {"match": {"isbn" : books_list[y]['_source']['isbn'] }, }},
+        query={"query": {"match": {"isbn" : isbn }, }},
     )
 
-    rating_changed = list(rating) 
+    #metatroph to 'generator' object se list gia na einai prospelasimo pio eukola
+    ratings_mid = list(ratings_query_results) 
 
-    #to kanoyme ayto gia na mpainoyn ola ta ratings gia kathe isbn
-    for x in range(len(rating_changed)):
-        data = [rating_changed[x]['_source']['uid'],rating_changed[x]['_source']['isbn'],rating_changed[x]['_source']['rating']]
+    #eisagogi stin lista ratings final ton aparaition stoixeiwn
+    for x in range(len(ratings_mid)):
+        data = [ratings_mid[x]['_source']['uid'],ratings_mid[x]['_source']['isbn'],ratings_mid[x]['_source']['rating']]
     
-        ratings_full.append(data)
-    #print(ratings_full)
+        ratings_final.append(data)
 
-'''
-#ektuposi full ratings
-for x in range(len(ratings_full)):
-    print(ratings_full[x])
-'''
+
+#ektuposi final ratings
+for x in range(len(ratings_final)):
+    print(ratings_final[x])
+
+print('\n')
+print('--',len(books_final),"Relevant books found.")    
+print('--',len(ratings_final) , " Ratings made for these books.")  
+
 
 #ratings gia ta isbn poy tairiazoyn 
-print("\n", len(ratings_full) , " ratings made \n")
-
-ratings_final = []
-for x in range (len(ratings_full)):
-    if (ratings_full[x][0] == user ):
-        ratings_final.append(ratings_full[x])
+user_ratings = []
+for x in range (len(ratings_final)):
+    if (ratings_final[x][0] == user ):
+        user_ratings.append(ratings_final[x])
         print("added ", x)
 
 #ektuposi final ratings tou xrhsth poy mas endiaferei
-if ratings_final:
-    for x in range(len(ratings_final)):
-        print(ratings_final[x])
+if user_ratings:
+    for x in range(len(user_ratings)):
+        print(user_ratings[x])
+
+    print("User has", len(user_ratings), "recorded ratings for these books.")    
 else:
-    print("\nUser has no recorded ratings for the relative books")        
+    print("--User has no recorded ratings for the relevant books.\n")        
 
 
 
 
+#ksekiname ton elegxo gia ton orismo twn swstwn score
+
+if user_ratings:
+    for x in range(len(books_final)):
+        for y in range(len(user_ratings)):
+            if books_final[x][1] == user_ratings[y][1]:
+                books_final[x][1] = books_final[x][1] + user_ratings[y][2]
+                print("SCORE CHANGED")
+
+    books_final.sort(reverse=True)
+    for x in range(len(books_final)):
+        print(books_final[x])            
+else:
+    books_final.sort(reverse=True)
+    '''
+    for x in range(len(books_final)):
+        print(books_final[x])               
+'''
 
 
 
 
-
+#μενει απλα να εμφανιζει μονο το 10% με τα καλυτερα
 
 #BASIKA PROVLIMATA AYTI TIN STIGMH
 
-#na katharistei h lista ratings_final filtrarontas tin analoga me to uid poy mas edose o xrhsths apo thn arxh
+# προβλημα με τα uid απο τα δεδομενα. Πολλα uid υπαρχουν στα ratings αλλα δεν υπαρχουν στους users.
+# δεν πετυχαινεις ευκολα user να εχει κανει κριτικες
