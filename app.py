@@ -2,14 +2,13 @@ from elasticsearch import Elasticsearch, helpers
 from elasticsearch.helpers import scan
 import pandas as pd
 import numpy as np
-import sys
-import json
+import time
 import csv
-
 
 ENDPOINT = "http://localhost:9200"
 es = Elasticsearch(hosts=ENDPOINT)
 
+#upload code
 """ 
 To kratame giati etsi fortwsame ta arxeia wste na to deiksoyme sthn anafora
 
@@ -26,45 +25,6 @@ with open("BX-Book-Ratings.csv") as y:
     helpers.bulk(es, reader, index="ratings")
     """
 
-"""
-logika tha fugei auto 
-def get_data_from_elastic():
-    # query: The elasticsearch query.
-    query = {
-        "query": {
-            "match_all": {}
-            
-        }
-    }
-    # Scan function to get all the data.
-    rel = scan(client=es,
-               query=query,
-               scroll='1m',
-               index='ratings',
-               raise_on_error=True,
-               preserve_order=False,
-               clear_scroll=True)
-    # Keep response in a list.
-    result = list(rel)
-    temp = []
-    
-    
-    # We need only '_source', which has all the fields required.
-    # This elimantes the elasticsearch metdata like _id, _type, _index.
-    
-    for hit in result:
-        temp.append(hit['_source'])
-    # Create a dataframe.
-    df = pd.DataFrame(temp)
-    return df
-
-
-df = get_data_from_elastic()
-
-
-print(df.head())
-
-"""
 
 search_topic = input("\nWrite what book do you want to search: ")
 user = input("Write your UID:  ")
@@ -88,8 +48,10 @@ while check ==0:
         print('User does not exist')
         user = input("Write your UID:  ")
 
-#pairnoume ta sxetika me to alfarithmitiko pou edose o xristis vivlia 
 
+start = time.time()
+
+#pairnoume ta sxetika me to alfarithmitiko pou edose o xristis vivlia 
 books_final=[]
 books_query_results = scan(es,
     #insert the index that you want data from
@@ -136,36 +98,23 @@ for y in range (len(books_final)):
         ratings_final.append(data)
 
 
-#ektuposi final ratings
+#ektuposi final ratings (ratings olwn twn vivliwn )
 for x in range(len(ratings_final)):
     print(ratings_final[x])
 
-print('\n')
-print('--',len(books_final),"Relevant books found.")    
-print('--',len(ratings_final) , " Ratings made for these books.")  
 
-
-#ratings gia ta isbn poy tairiazoyn 
+#elegxos gia to an o user exei kanei ratings gia ta sxetika vivlia
 user_ratings = []
 for x in range (len(ratings_final)):
     if (ratings_final[x][0] == user ):
         user_ratings.append(ratings_final[x])
         print("added ", x)
 
-#ektuposi final ratings tou xrhsth poy mas endiaferei
-if user_ratings:
-    for x in range(len(user_ratings)):
-        print(user_ratings[x])
+end = time.time()
 
-    print("User has", len(user_ratings), "recorded ratings for these books.")    
-else:
-    print("--User has no recorded ratings for the relevant books.\n")        
+      
 
-
-
-
-#ksekiname ton elegxo gia ton orismo twn swstwn score
-
+#Sundiasmos metrikis omoiotitas elasticsearch me to rating ton xrhstwn.
 if user_ratings:
     for x in range(len(books_final)):
         for y in range(len(user_ratings)):
@@ -174,19 +123,40 @@ if user_ratings:
                 print("SCORE CHANGED")
 
     books_final.sort(reverse=True)
-    for x in range(len(books_final)):
-        print(books_final[x])            
+    #EKTUPOSI TELIKON VIVLIWN ME XRISTI POY EXEI KANEI RATING
+    print("\nThe top 10% most relevant books for your search are:\n ")
+    for x in range(round(len(books_final)/10)):
+        print(x+1,')',books_final[x])            
 else:
     books_final.sort(reverse=True)
-    '''
-    for x in range(len(books_final)):
-        print(books_final[x])               
-'''
+    #EKTUPOSI TELIKON VIVLIWN ME XRISTI POY DEN EXEI KANEI RATING
+    print("\nThe top 10% most relevant books for your search are:\n ")
+    for x in range(round(len(books_final)/10)):
+        print(x+1,')', books_final[x])               
 
 
 
 
-#μενει απλα να εμφανιζει μονο το 10% με τα καλυτερα
+#EKTYPOSEIS TELIKES 
+print('\n')
+print('--',len(books_final),"Relevant books found.")    
+print('--',len(ratings_final) , " Ratings made for these books.") 
+
+#ektuposi final ratings tou xrhsth poy mas endiaferei
+if user_ratings:
+    for x in range(len(user_ratings)):
+        print(user_ratings[x])
+
+    print("User has", len(user_ratings), "recorded ratings for these books.")    
+else:
+    print("-- User has no recorded ratings for the relevant books.\n\n")  
+
+print('-- We suggest', round(len(books_final)/10), ' (10 precent of all) highest scored books for your search. \n')
+
+print("The execution time for the program is :", (end-start), "seconds\n")    
+
+
+
 
 #BASIKA PROVLIMATA AYTI TIN STIGMH
 
