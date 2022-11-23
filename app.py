@@ -158,7 +158,8 @@ print("The execution time for the program is :", (end-start), "seconds\n")
 
 
 
-#BASIKA PROVLIMATA AYTI TIN STIGMH
+#TO DO
 
-# προβλημα με τα uid απο τα δεδομενα. Πολλα uid υπαρχουν στα ratings αλλα δεν υπαρχουν στους users.
-# δεν πετυχαινεις ευκολα user να εχει κανει κριτικες
+# Sto telos na emfanizei mono ta 50-100 kalutera tairiasmata kai oxi to 10%
+# Na mpei deutero field sthn arxiki anzitisi na exei mesa kai to summary 
+
