@@ -3,6 +3,8 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import make_blobs
 import plotly.express as exp
 
 data = pd.read_csv('BX-Users.csv')
@@ -36,52 +38,48 @@ unique_countries = data['location'].unique()
 print("Xwres meta to katharisma: ", len(unique_countries))
 print(unique_countries)
 
-#prepei an vrethei pos ginetai na kano cluster analoga tin xora 
-# i toulaxiston na kano ena plot gia hlikies kai xwres
 
-'''
-plt.figure(figsize=(9,25))
-ax = sns.barplot(x="age", y="Country",
-                 data=data, palette="tab20c",
-                 linewidth = 1)
-for i,j in enumerate(data["age"]):
-    ax.text(.5, i, j, weight="bold", color = 'black', fontsize =10)
-plt.title("Population of each country in 2020")
-ax.set_xlabel(xlabel = 'Population in Billion', fontsize = 10)
-ax.set_ylabel(ylabel = 'Countries', fontsize = 10)
-plt.show()
+def makePlot(number): 
 
+    for x in range(number):
+        country = unique_countries[x]
+        age18_25 = data[data['location'] == country]['age'][(data[data['location'] == country]['age'] <= 25) & (data[data['location'] == country]['age'] >= 18)]
+        age26_35 = data[data['location'] == country]['age'][(data[data['location'] == country]['age'] <= 35) & (data[data['location'] == country]['age'] >= 26)]
+        age36_45 = data[data['location'] == country]['age'][(data[data['location'] == country]['age'] <= 45) & (data[data['location'] == country]['age'] >= 36)]
+        age46_55 = data[data['location'] == country]['age'][(data[data['location'] == country]['age'] <= 55) & (data[data['location'] == country]['age'] >= 46)]
+        age55above = data[data['location'] == country]['age'][data[data['location'] == country]['age'] >= 56]
 
-'''
+        x = ["18-25","26-35","36-45","46-55","55+"]
+        y = [len(age18_25.values),len(age26_35.values),len(age36_45.values),len(age46_55.values),len(age55above.values)]
 
+        plt.figure(figsize=(15,6))
+        sns.barplot(x=x, y=y, palette="rocket")
+        plt.title(country)
+        plt.xlabel("Age")
+        plt.ylabel("COUNT OF PEOPLE")
+        plt.show()  
 
-
-
-'''
-kmeans = KMeans(5)
-kmeans.fit(data.iloc[:,1:])
-
-'''
+#makePlot(5)
 
 
-'''
-sns.set_style("darkgrid")
-plt.figure(figsize=(20,20))
-sns.barplot(x=countries.index, y=countries.values)
-plt.show()
 
-sns.set_style("darkgrid")
-plt.figure(figsize=(10,4))
-sns.barplot(x=ages.index, y=ages.values)
-plt.show()
+each_country = data.loc[data['location'] == ' usa']
 
+each_country = each_country.dropna()
+#each_country['age'].values.reshape(1,-1)
 
-plt.figure(figsize=(20,20))
-plt.title("Ages Frequency")
-sns.axes_style("dark")
-sns.violinplot(y=data["age"])
-plt.show()
-'''
+print(each_country['age'].values)
+
+scaler = StandardScaler()
+scaled_features = scaler.fit_transform([each_country['age']])
 
 
-print(data.head())
+
+
+
+
+
+
+
+
+
