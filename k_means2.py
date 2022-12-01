@@ -62,14 +62,20 @@ def makePlot(number):
 #makePlot(5)
 
 
-
 each_country = data.loc[data['location'] == ' usa']
-
 each_country = each_country.dropna()
 #each_country['age'].values.reshape(1,-1)
 
-print(each_country['age'].values)
 
+#print(each_country.iloc[5]['location'])
+each_country['location'] = each_country['location'].replace(each_country.iloc[0]['location'], 1)
+
+
+
+print(each_country)
+
+each_country.info()
+#edw ginetai kanonikopoisi
 scaler = StandardScaler()
 scaled_features = scaler.fit_transform([each_country['age']])
 
