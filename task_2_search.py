@@ -8,22 +8,15 @@ import csv
 ENDPOINT = "http://localhost:9200"
 es = Elasticsearch(hosts=ENDPOINT)
 
-#upload code
-""" 
-To kratame giati etsi fortwsame ta arxeia wste na to deiksoyme sthn anafora
+#upload code to idio me ton prwto apla anebazoyme ta ananeomena dedomena meta tin leiyourgia tou task_2_main.py
 
-with open("BX-Books.csv") as f:
-    reader = csv.DictReader(f)
-    helpers.bulk(es, reader, index="books")
-
-with open("BX-Users.csv") as x:
+#To kratame giati etsi fortwsame ta arxeia wste na to deiksoyme sthn anafora
+'''
+with open("Updated-Ratings.csv") as x:
     reader = csv.DictReader(x)
-    helpers.bulk(es, reader, index="users")\
+    helpers.bulk(es, reader, index="updated_ratings")
+'''
 
-with open("BX-Book-Ratings.csv") as y:
-    reader = csv.DictReader(y)
-    helpers.bulk(es, reader, index="ratings")
-    """
 
 
 search_topic = input("\nWrite what book do you want to search: ")
@@ -83,7 +76,7 @@ for y in range (len(books_final)):
     
     #pairnoume ola ta rating poy exoun ginei gia ta sxetika vivlia
     ratings_query_results = scan(es,
-        index="ratings",
+        index="updated_ratings",
         preserve_order=True,
         query={"query": {"match": {"isbn" : isbn }, }},
     )
