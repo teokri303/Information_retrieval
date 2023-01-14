@@ -61,12 +61,6 @@ for x in range(len(books_mid)):
         data = [books_mid[x]['_score'], books_mid[x]['_source']['isbn'], books_mid[x]['_source']['book_title']]
     
         books_final.append(data)
-'''
-#ektuposi twn sxetikwn vivliwn
-for x in range(len(books_final)):
-        print(x+1, ")", books_final[x][0], books_final[x][1], books_final[x][2])
-
-'''
 
 
 #psaxnoyme ti rating exei kanei o xrhsths sta sxetika vivlia poy proekupsan
@@ -92,8 +86,8 @@ for y in range (len(books_final)):
 
 
 #ektuposi final ratings (ratings olwn twn vivliwn )
-for x in range(len(ratings_final)):
-    print(ratings_final[x])
+#for x in range(len(ratings_final)):
+#    print(ratings_final[x])
 
 
 #elegxos gia to an o user exei kanei ratings gia ta sxetika vivlia
@@ -146,13 +140,6 @@ else:
 
 print('-- We suggest', round(len(books_final)/10), ' (10 precent of all) highest scored books for your search. \n')
 
-print("The execution time for the program is :", (end-start), "seconds\n")    
+print("The execution time for the program was :", (end-start), "seconds\n")    
 
-
-
-
-#TO DO
-
-# Sto telos na emfanizei mono ta 50-100 kalutera tairiasmata kai oxi to 10%
-# Na mpei deutero field sthn arxiki anzitisi na exei mesa kai to summary 
 

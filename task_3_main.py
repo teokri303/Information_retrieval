@@ -3,15 +3,20 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from keras.models import Sequential
 from keras.layers import Dense
+pd.options.mode.chained_assignment = None  # default='warn'
+
 
 # pairnoume ta aparaitita arxeia 
 data = pd.read_csv('Updated-Ratings.csv')
 books = pd.read_csv('BX-Books.csv')
-clust_1 = pd.read_csv('Clust_1.csv')
-clust_2 = pd.read_csv('Clust_2.csv')
-clust_3 = pd.read_csv('Clust_3.csv')
+clust_1 = pd.read_csv('data/Clust_1.csv')
+clust_2 = pd.read_csv('data/Clust_2.csv')
+clust_3 = pd.read_csv('data/Clust_3.csv')
 
 zero_ratings = data[data['rating'] == 0]
+
+print('ARXIKA RATINGS: ', len(data))
+print('ZERO RATINGS: ', len(zero_ratings), '\n')
 
 c1_uids = list(set(clust_1.uid).intersection(set(data.uid)))
 c2_uids = list(set(clust_2.uid).intersection(set(data.uid)))
@@ -81,8 +86,9 @@ for cluster in clusters:
                 metrics=['accuracy'])
 
 
-    model.fit(X_train, y_train)
+    model.fit(X_train, y_train, verbose = 0)
 
+    # model predict enw tou dinoume ta zero summaries gia na mas dosei vathmoligies
     y_pred = model.predict(X_test)
 
     # etoimasia twn ratings gia eisagwgh
@@ -96,7 +102,10 @@ for cluster in clusters:
     # eidagwgh twn provlepsewn sta arxika ratings kai antikatastash twn 0 
     data.update(zero_ratings_clust)
 
-    print(len(data))
     zero_ratings = data[data['rating'] == 0]
-    print('OLA TA ZERO RATINGS meta tin prosthiki tis provlepsis: ' , len(zero_ratings) )
+    print('OLA TA ZERO RATINGS meta tin prosthiki tis provlepsis: ' , len(zero_ratings), '\n')
 
+
+# Apothikeusi se csv twn oloklhromenwn final rating xwris zero times pleon gia tin xrhsh pali apo to search
+data.to_csv('Neural-Final-Updated-Ratings.csv')
+print("Neural ratings is saved. ")

@@ -9,14 +9,7 @@ import plotly.express as exp
 data = pd.read_csv('BX-Users.csv')
 ratings = pd.read_csv('BX-Book-Ratings.csv')
 
-# Katharismos twn ratings apo touw xristes pou den ufistantai sto user dataset kai den tha uparksoun oute sta cluster
-
-# Katharismos pairnontas tin tomi twn User uids kai Rating uids
-uids = list(set(ratings.uid).intersection(set(data.uid)))
-ratings = ratings[ratings.uid.isin(uids)]
-
-# Second option katharismos me merge
-#ratings = pd.merge(ratings, data, how='inner', on='uid')
+#--------------------- USERS PART -----------------------------------------------------
 
 #---katharismos tou column location gia na meinei mono h xwra---
 data.location = data.location.apply(lambda x: x.split(', ')[-1])
@@ -70,10 +63,18 @@ data = data.reset_index(drop=True)
 #eisagoume neo column sta data me to se poio cluster anikei o kahte user
 data['cluster'] = model
 
+
+
 # edw ksexwrizoyme tous users me vasi to cluster pou tous anatehike
 clust_1 = data[data['cluster'] == 0]
 clust_2 = data[data['cluster'] == 1]
 clust_3 = data[data['cluster'] == 2]
+
+
+clust_1.to_csv('data/Clust_1.csv')
+clust_2.to_csv('data/Clust_2.csv')
+clust_3.to_csv('data/Clust_3.csv')
+
 
 print('Dimiourgithika 3 cluster xrhstwn me plithos: ')
 print('Cluster 1: ', len(clust_1))
@@ -81,7 +82,15 @@ print('Cluster 2: ', len(clust_2))
 print('Cluster 3: ', len(clust_3))
 
 
-#---------------------RATINGS PART-----------------------------------------
+#--------------------- RATINGS PART ------------------------------------------------------------------
+
+# Katharismos twn ratings apo touw xristes pou den ufistantai sto user dataset kai den tha uparksoun oute sta cluster
+# Katharismos pairnontas tin tomi twn User uids kai Rating uids
+uids = list(set(ratings.uid).intersection(set(data.uid)))
+ratings = ratings[ratings.uid.isin(uids)]
+
+# Second option katharismos me merge
+#ratings = pd.merge(ratings, data, how='inner', on='uid')
 
 # Apo ola ta ratings einai auta poy einai midenika
 zero_ratings = ratings[ratings['rating'] == 0]
@@ -100,6 +109,7 @@ print('Zero ratings: ' , len(zero_ratings))
 clust_1_users_ratings = pd.merge(clust_1, non_zero_ratings, how='inner', on='uid')
 clust_2_users_ratings = pd.merge(clust_2, non_zero_ratings, how='inner', on='uid')
 clust_3_users_ratings = pd.merge(clust_3, non_zero_ratings, how='inner', on='uid')
+
 
 #clust_1_users_ratings.head()
 
@@ -141,6 +151,7 @@ for book in range(len(zero_ratings)):
         books_rat_clust3=np.append(books_rat_clust3, np.array([[x, mean]]), axis=0)        
 
 
+
 # pairno mia mia tis midenikes kritikes
 for x in range(len(zero_ratings)):
     user = zero_ratings.iloc[x]['uid']
@@ -163,11 +174,14 @@ for x in range(len(zero_ratings)):
         index = book_potition[0][0]
         zero_ratings.at[x, 'rating'] = books_rat_clust3[index][1]
 
-        
+
+
 # epanenosi me to non zero ratings gia na ta apothikeusoyme wste na xrisimopoiithoun
 updated_ratings = pd.concat([non_zero_ratings, zero_ratings])
 updated_ratings = updated_ratings.reset_index(drop=True)
 
 # apothikeusi sto working directory
-updated_ratings.to_csv('Updated_Ratings.csv')
+updated_ratings.to_csv('Updated-Ratings.csv')
 print("New ratings is saved. ")
+
+updated_ratings.reset_index(drop=True)
