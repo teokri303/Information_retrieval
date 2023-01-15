@@ -85,7 +85,6 @@ for cluster in clusters:
                 loss='binary_crossentropy',
                 metrics=['accuracy'])
 
-
     model.fit(X_train, y_train, verbose = 0)
 
     # model predict enw tou dinoume ta zero summaries gia na mas dosei vathmoligies
@@ -97,8 +96,6 @@ for cluster in clusters:
     values = np.round(values, 0)
 
     zero_ratings_clust['rating'] = values
-
-
     # eidagwgh twn provlepsewn sta arxika ratings kai antikatastash twn 0 
     data.update(zero_ratings_clust)
 
